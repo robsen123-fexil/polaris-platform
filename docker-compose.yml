@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: polaris
+      POSTGRES_PASSWORD: polaris
+      POSTGRES_DB: polaris
+    ports: ['5432:5432']
+  redis:
+    image: redis:7-alpine
+    ports: ['6379:6379']
+  gateway:
+    build:
+      context: .
+      dockerfile: cmd/gateway/Dockerfile
+    ports: ['8800:8800']
+    depends_on: [postgres, redis]
+  auth:
+    build:
+      context: .
+      dockerfile: cmd/auth/Dockerfile
+    ports: ['8801:8801']
+  workflow:
+    build:
+      context: .
+      dockerfile: cmd/workflow/Dockerfile
+    ports: ['8802:8802']
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports: ['8080:80']
